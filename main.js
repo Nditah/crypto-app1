@@ -1,6 +1,9 @@
-const { app, BrowserWindow } = require('electron')
+require('electron-reload')(__dirname)
+
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const url = require('url')
+const shell = require('electron').shell
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -12,13 +15,13 @@ function createWindow() {
 
     // and load the index.html of the app.
     win.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: path.join(__dirname, 'src/index.html'),
         protocol: 'file:',
         slashes: true
     }))
 
     // Open the DevTools.
-    win.webContents.openDevTools()
+    //win.webContents.openDevTools()
 
     // Emitted when the window is closed.
     win.on('closed', () => {
@@ -27,6 +30,36 @@ function createWindow() {
         // when you should delete the corresponding element.
         win = null
     })
+
+    var menu = Menu.buildFromTemplate([
+        {
+            label: 'Menu',
+            submenu: [
+                { label: 'Adjust Notification Value' },
+                {
+                    label: 'CoinMarketCap',
+                    click() {
+                        shell.openExternal('http://coinmarketcap.com')
+                    },
+                    accelerator: 'CmdOrCtrl+Shift+C'
+                },
+                {type:'separator'},  
+                {
+                    label: 'Exit',
+                    click() {
+                        app.quit()
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Info'
+        },
+        {
+            label: 'About'
+        }
+    ])
+    Menu.setApplicationMenu(menu);
 }
 
 // This method will be called when Electron has finished
